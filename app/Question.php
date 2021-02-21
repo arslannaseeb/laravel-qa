@@ -36,6 +36,7 @@ class Question extends Model
             }
             return "answered";
         }
+        return "unanswered";
     }
 
 }
