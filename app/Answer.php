@@ -26,6 +26,10 @@ class Answer extends Model
             $answer->question->increment('answers_count');
         });
 
+        static::deleted(function ($answer){
+            $answer->question->decrement('answers_count');
+        });
+
     }
     
     public function getCreatedDateAttribute(){
@@ -33,4 +37,8 @@ class Answer extends Model
         
     }
     
+    public function getStatusAttribute(){
+        return $this->id = $this->question->best_answer_id ? 'vote-accepted' : '';
+
+    }
 }

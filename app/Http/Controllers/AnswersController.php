@@ -37,9 +37,12 @@ class AnswersController extends Controller
      * @param  \App\Answer  $answer
      * @return \Illuminate\Http\Response
      */
-    public function edit(Answer $answer)
+    public function edit(Question $question, Answer $answer)
     {
-        //
+        $this->authorize('update',$answer);
+
+        return view('answers.edit',compact('question','answer'));
+
     }
 
     /**
@@ -49,9 +52,19 @@ class AnswersController extends Controller
      * @param  \App\Answer  $answer
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Answer $answer)
+    public function update(Request $request,Question $question, Answer $answer)
     {
-        //
+        $this->authorize('update',$answer);
+
+        $request->validate([
+            'body' => 'required',
+        ]);
+
+        $answer->update(['body'=>$request->body]);
+
+        return redirect(route('questions.show',$question->slug));
+
+
     }
 
     /**
@@ -62,6 +75,10 @@ class AnswersController extends Controller
      */
     public function destroy(Answer $answer)
     {
-        //
+        $this->authorize('delete',$answer);
+        $answer->delete();
+        
+        return back();
+
     }
 }
