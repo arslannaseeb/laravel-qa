@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Auth;
 
 class Question extends Model
 {
@@ -43,6 +44,46 @@ class Question extends Model
         return $this->hasMany(Answer::class);
     }
 
+    public function acceptBestAnswer(Answer $answer){
+        $this->best_answer_id = $answer->id;
+        $this->save();
+
+    }    
+
+
+    public function favorites(){
+        return $this->belongsToMany(User::class,'favorites','question_id','user_id')->withTimestamps();
+             
+   }
+//is the particular question is favorited by a particular user.
+
+   public function isFavorited(){
+        return $this->favorites()->where('user_id',Auth::id())->count() > 0;
+
+   }
+
+   public function getIsFavoritedAttribute(){
+        return $this->isFavorited();
+   }
+
+   public function getFavoritesCountAttribute(){
+        return $this->Favorites()->count();
+
+   }
+
+   public function votes(){
+       return $this->morphToMany(User::class,'voteable');
+       
+   }
+
+   public function upVotes(){
+           return $this->votes()->wherePivot('vote',1);    
     
+   }
+
+   public function downVotes(){
+            return $this->votes()->wherePivot('vote',-1);   
+   }
+
 
 }
