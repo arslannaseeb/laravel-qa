@@ -21,4 +21,5 @@ class VoteAnswerController extends Controller
     }
 
     
+    
 }

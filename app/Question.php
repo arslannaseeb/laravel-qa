@@ -7,6 +7,8 @@ use Auth;
 
 class Question extends Model
 {
+    use VoteableTrait;
+    
     protected $fillable = [
         'title', 'body',
     ];
@@ -41,7 +43,7 @@ class Question extends Model
     }
 
     public function answers(){
-        return $this->hasMany(Answer::class);
+        return $this->hasMany(Answer::class)->orderBy('votes_count','DESC');
     }
 
     public function acceptBestAnswer(Answer $answer){
@@ -69,20 +71,6 @@ class Question extends Model
    public function getFavoritesCountAttribute(){
         return $this->Favorites()->count();
 
-   }
-
-   public function votes(){
-       return $this->morphToMany(User::class,'voteable');
-       
-   }
-
-   public function upVotes(){
-           return $this->votes()->wherePivot('vote',1);    
-    
-   }
-
-   public function downVotes(){
-            return $this->votes()->wherePivot('vote',-1);   
    }
 
 
